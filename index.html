@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Learn C builds. Generate a real Makefile or CMake starter for native Linux and ARM cross-compilation, entirely in your browser.">
+  <meta name="color-scheme" content="light">
+  <title>C Build Lab — Makefile &amp; CMake generator</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <a class="skip" href="#builder">Skip to generator</a>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="C Build Lab home"><span class="brand-icon" aria-hidden="true">C<span>_</span></span> Build Lab</a>
+    <nav aria-label="Main navigation"><a href="#learn">How it works</a><a href="https://github.com/itsnavin/c-build-generator">GitHub <span aria-hidden="true">↗</span></a></nav>
+  </header>
+  <main>
+    <section class="hero" aria-labelledby="title">
+      <p class="eyebrow"><span class="dot"></span> SMALL PROGRAM. REAL BUILD FILES.</p>
+      <h1 id="title">Your first C build,<br><span>without the guesswork.</span></h1>
+      <p class="intro">Start with a simple program. Pick your build system and target.<br class="desktop"> Take home a project you can actually compile.</p>
+      <div class="badges"><span>100% in your browser</span><span>No sign-up</span><span>Made for learning</span></div>
+    </section>
+    <section id="builder" class="workspace" aria-label="Project generator">
+      <form id="settings" novalidate>
+        <div class="panel-heading"><span class="step">01</span><h2>Set up your project</h2></div>
+        <fieldset class="build-system"><legend>Build system</legend>
+          <div class="segmented"><label><input type="radio" name="generator" value="make" checked><span>Makefile</span></label><label><input type="radio" name="generator" value="cmake"><span>CMake</span></label></div>
+          <p class="hint" id="system-hint">Direct, readable build rules. A great place to start.</p>
+        </fieldset>
+        <label for="name">Project &amp; executable name</label>
+        <input id="name" name="name" value="hello_c" maxlength="40" spellcheck="false" aria-describedby="name-hint name-error">
+        <p class="hint" id="name-hint">Start with a letter. Use letters, numbers, _ or -.</p>
+        <p class="error" id="name-error"></p>
+        <label for="template">Starter program</label>
+        <select id="template" name="template"><option value="greeting">Hello, C! — a simple greeting</option><option value="sensor">Temperature — a simulated sensor</option></select>
+        <div class="divider"></div>
+        <div class="section-label"><span class="step small">02</span><h3>Choose your target</h3></div>
+        <label for="target">Where will your program run?</label>
+        <select id="target" name="target"><option value="native">This computer · Native Linux</option><option value="aarch64">ARM 64-bit · AArch64 Linux</option><option value="armhf">ARM 32-bit · Linux hard-float</option><option value="custom">Custom Linux toolchain</option></select>
+        <p id="target-note" class="notice">Native: build and run on the same Linux computer.</p>
+        <label for="compiler">C compiler</label>
+        <input id="compiler" name="compiler" value="gcc" spellcheck="false" aria-describedby="compiler-hint compiler-error">
+        <p class="hint" id="compiler-hint">A GCC-compatible name or absolute Linux path; no arguments.</p>
+        <p class="error" id="compiler-error"></p>
+        <div id="custom-settings" hidden>
+          <label for="processor">Target processor</label>
+          <select id="processor" name="processor"><option value="aarch64">aarch64</option><option value="arm">arm</option><option value="x86_64">x86_64</option><option value="riscv64">riscv64</option></select>
+        </div>
+        <div id="sysroot-settings" hidden>
+          <label for="sysroot">Sysroot <span class="optional">optional</span></label>
+          <input id="sysroot" name="sysroot" placeholder="/opt/target-sysroot" spellcheck="false" aria-describedby="sysroot-hint sysroot-error">
+          <p class="hint" id="sysroot-hint">Target headers &amp; libraries, not the compiler folder. Empty uses toolchain defaults. No spaces or shell syntax.</p>
+          <p class="error" id="sysroot-error"></p>
+        </div>
+        <div class="divider"></div>
+        <div class="section-label"><span class="step small">03</span><h3>Build preferences</h3></div>
+        <div class="field-grid">
+          <div><label for="standard">C standard</label><select id="standard" name="standard"><option value="c99">C99</option><option value="c11" selected>C11</option><option value="c17">C17</option></select></div>
+          <div><label for="mode">Configuration</label><select id="mode" name="mode"><option>Debug</option><option>Release</option></select></div>
+          <div><label for="optimization">Optimization</label><select id="optimization" name="optimization"><option value="0">-O0 · easy debugging</option><option value="1">-O1 · light</option><option value="2">-O2 · balanced</option><option value="3">-O3 · aggressive</option><option value="s">-Os · smaller</option></select></div>
+          <div><label for="warnings">Warnings</label><select id="warnings" name="warnings"><option value="strict">Strict · recommended</option><option value="basic">Basic · -Wall</option></select></div>
+        </div>
+        <p class="hint">Debug adds symbols; Release defines NDEBUG. Optimization stays your choice.</p>
+        <p id="form-error" class="error" role="alert"></p>
+        <noscript><p class="error">Enable JavaScript to generate and download a project. No information is sent to a server.</p></noscript>
+      </form>
+      <div class="output-panel">
+        <div class="panel-heading"><div class="preview-title"><span class="live-dot" aria-hidden="true"></span><h2>Your starter project</h2></div><span class="file-count" id="file-count"></span></div>
+        <div class="file-tabs" role="tablist" aria-label="Generated files" id="file-tabs"></div>
+        <div class="code-frame" role="tabpanel" id="file-panel" tabindex="0" aria-label="Generated file preview"><pre><code id="preview"></code></pre></div>
+        <div class="preview-footer"><span>Plain files. Yours to edit.</span><button type="button" id="copy">Copy file</button></div>
+        <div class="download-block">
+          <button type="button" class="primary" id="download"><span aria-hidden="true">↓</span> Download starter .zip</button>
+          <p>Includes source, build files &amp; step-by-step instructions.</p>
+        </div>
+        <div class="run-block"><p class="eyebrow">AFTER YOU EXTRACT THE ZIP</p><h3 id="command-title">Build it. Run it.</h3><pre><code id="commands"></code></pre><p id="run-note"></p></div>
+        <p id="status" class="status" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+    <section id="learn" class="learning" aria-labelledby="learn-title">
+      <p class="eyebrow">A LITTLE CONTEXT GOES A LONG WAY</p><h2 id="learn-title">From source code to something that runs.</h2>
+      <div class="learn-grid">
+        <article><span class="learn-number">01 / PREPROCESS</span><h3>Prepare the source</h3><p>The preprocessor expands <code>#include</code> and macros. Your headers and C source become input for the compiler.</p></article>
+        <article><span class="learn-number">02 / COMPILE</span><h3>Speak machine language</h3><p>The compiler translates C into machine code, via assembly, creating an object file. Warnings help you spot mistakes early.</p></article>
+        <article><span class="learn-number">03 / LINK</span><h3>Put it all together</h3><p>The compiler driver calls the linker to join objects and runtime libraries into your executable. Make or CMake coordinates these steps.</p></article>
+      </div>
+      <details><summary>Native vs cross-compilation: which machine does what?</summary><p>Your <strong>build machine</strong> runs the tools. The resulting program runs on the <strong>target platform</strong>. Native means both platforms match; cross-compilation means they differ. In compiler-building terminology, <strong>host</strong> is the machine running the compiler, and target is the machine it generates code for.</p><p>These starters target Linux, not bare-metal microcontrollers or native Windows. On Windows, use WSL with Linux tools.</p></details>
+      <details><summary>Will the ARM presets work on my Raspberry Pi?</summary><p>Not necessarily. AArch64 needs a 64-bit ARM Linux OS. ARM hard-float needs a compatible 32-bit hard-float userspace and CPU/FPU. The processor model alone is not enough: check ABI, loader, libc version and target OS. A sysroot from the target or vendor SDK helps match headers and libraries.</p><p>An ARM executable cannot run directly on an x86 computer. Copy it to the compatible target and run it there. QEMU needs additional setup and matching runtime libraries; this tool does not configure it.</p></details>
+      <details><summary>Compiler prefix or sysroot — what's the difference?</summary><p><code>aarch64-linux-gnu-</code> is a prefix naming a family of tools, such as <code>aarch64-linux-gnu-gcc</code>. A <strong>sysroot</strong> is a directory containing target headers and libraries. It is not the compiler directory. Leave it empty to use your cross compiler's built-in defaults, or provide a matching SDK sysroot. Never link ARM objects against host x86 libraries.</p><p>On Ubuntu/Debian, example packages are <code>build-essential</code>, <code>cmake</code>, <code>gcc-aarch64-linux-gnu</code> and <code>gcc-arm-linux-gnueabihf</code>. The downloaded README includes commands for your selection.</p></details>
+      <details><summary>What do the build options change?</summary><p>C99, C11 and C17 select the language version. Debug adds debug information; Release defines <code>NDEBUG</code> (disabling C assertions). Optimization is independent: <code>-O0</code> makes stepping through code easier; <code>-O2</code> is a common release choice. Strict warnings add <code>-Wextra -Wpedantic</code> to <code>-Wall</code>; they are not treated as errors.</p><p>Each generated configuration gets a separate build directory. If you manually override Make compiler or flags, clean first. For CMake, configure a fresh directory when changing toolchains; the toolchain is loaded before <code>project()</code>.</p></details>
+      <p class="references">Keep learning from the source: <a href="https://www.gnu.org/software/make/manual/">GNU Make manual</a> · <a href="https://cmake.org/cmake/help/latest/manual/cmake-toolchains.7.html">CMake toolchains</a> · <a href="https://gcc.gnu.org/onlinedocs/gcc/Directory-Options.html">GCC sysroots</a> · <a href="https://packages.debian.org/stable/gcc-aarch64-linux-gnu">Debian AArch64 package</a> · <a href="https://packages.debian.org/stable/gcc-arm-linux-gnueabihf">Debian ARM package</a></p>
+    </section>
+  </main>
+  <footer><span class="brand">C<span class="accent">_</span> Build Lab</span><p>A small starting point. A better understanding.</p><a href="https://github.com/itsnavin/c-build-generator">Open source on GitHub ↗</a></footer>
+</body>
+</html>

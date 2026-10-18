@@ -1,0 +1,15 @@
+{
+  "name": "c-build-generator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test tests/generator.test.js",
+    "test:build": "node tests/build.mjs",
+    "test:browser": "playwright test",
+    "start": "node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.61.1"
+  }
+}
